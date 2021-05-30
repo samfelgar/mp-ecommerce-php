@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function result(Request $request): Response
     {
         $query = $request->query();
-        $success = isset($query['collection_status']) && $query['collection_status'] === 'success';
+        $success = $this->isApproved($query['collection_status']);
         $feedback = $this->getFeedback($query['collection_status']);
 
         return response()->view('result', [
@@ -25,10 +25,17 @@ class HomeController extends Controller
         ]);
     }
 
+    private function isApproved(string $status): bool
+    {
+        return isset($query['collection_status'])
+            && ($query['collection_status'] === 'approved' || $query['collection_status'] === 'success');
+    }
+
     private function getFeedback(string $status): string
     {
         switch ($status) {
             case 'success':
+            case 'approved':
                 return 'O pagamento foi aprovado';
             case 'pending':
                 return 'O pagamento está pendente';

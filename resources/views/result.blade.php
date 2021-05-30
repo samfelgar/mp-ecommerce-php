@@ -2,9 +2,9 @@
 
 @section('content')
 
-    @if($success)
+    <div style="margin: 5em 0;">
 
-        <div>
+        @if($success)
 
             <h1>{{ $feedback }}</h1>
 
@@ -14,13 +14,10 @@
                 @endforeach
             </div>
 
-        </div>
-    @else
-
-        <div>
+        @else
             <h1>{{ $feedback }}</h1>
-        </div>
+        @endif
 
-    @endif
+    </div>
 
 @endsection
