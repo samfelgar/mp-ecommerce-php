@@ -12,7 +12,7 @@ class PaymentNotificationController extends Controller
         $data = $request->json();
 
         if (!empty($data)) {
-            Log::info(print_r($data, true));
+            Log::info(json_encode($data));
         }
 
         return response(null, 200);
