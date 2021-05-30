@@ -27,8 +27,7 @@ class HomeController extends Controller
 
     private function isApproved(string $status): bool
     {
-        return isset($query['collection_status'])
-            && ($query['collection_status'] === 'approved' || $query['collection_status'] === 'success');
+        return isset($status) && ($status === 'approved' || $status === 'success');
     }
 
     private function getFeedback(string $status): string

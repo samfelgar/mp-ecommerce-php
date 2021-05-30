@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div style="margin: 5em 0;">
+    <div style="margin: 5em 5em;">
 
         @if($success)
 
@@ -10,7 +10,9 @@
 
             <div>
                 @foreach($query as $key => $value)
-                    {{ $key }}: {{ $value }}
+                    <div>
+                        <strong>{{ $key }}</strong>: {{ $value }}
+                    </div>
                 @endforeach
             </div>
 
