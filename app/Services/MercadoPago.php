@@ -4,27 +4,85 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use MercadoPago\Item;
+use MercadoPago\Payer;
 use MercadoPago\Payment;
 use MercadoPago\Preference;
 use MercadoPago\SDK;
 
-class MercadoPago {
-
-    public Payment $payment;
-    public Preference $preference;
-
+class MercadoPago
+{
     public function __construct()
     {
         SDK::setAccessToken(config('mercadopago.token'));
-        $this->payment = new Payment();
-        $this->preference = new Preference();
+        SDK::setIntegratorId(config('mercadopago.integrator_id'));
     }
 
-    public function addItem(Item $item): Preference
+    public function createItem(array $product): Item
     {
-        $this->preference->items[] = $item;
-        $this->preference->save();
-        return $this->preference;
+        $item = new Item();
+        $item->id = 1234;
+        $item->title = $product['title'];
+        $item->description = 'Celular de Tienda e-commerce';
+        $item->quantity = $product['unit'];
+        $item->unit_price = $product['price'];
+        $item->picture_url = $product['img'];
+        return $item;
+    }
+
+    public function createPreference(): Preference
+    {
+        $preference = new Preference();
+        $preference->back_urls = [
+            'success' => route('result'),
+            'pending' => route('result'),
+            'failure' => route('result'),
+        ];
+        $preference->notification_url = route('notifications.feedback');
+        $preference->payment_methods = [
+            'excluded_payment_methods' => [
+                ['id' => 'amex']
+            ],
+            'installments' => 6,
+        ];
+        $preference->external_reference = 'samfelgar@gmail.com';
+
+        return $preference;
+    }
+
+    public function createPayer(): Payer
+    {
+        $payer = new Payer();
+        $payer->name = 'Lalo';
+        $payer->surname = 'Landa';
+        $payer->email = 'test_user_92801501@testuser.com';
+        $payer->phone = [
+            'area_code' => '55',
+            'number' => '98529-8743',
+        ];
+        $payer->address = [
+            'zip_code' => '78134-190',
+            'street_name' => 'Insurgentes Sur',
+            'street_number' => '1602',
+        ];
+
+        return $payer;
+    }
+
+    public function addItemToPreference(Preference $preference, Item $item): Preference
+    {
+        $preference->items = [$item];
+        return $preference;
+    }
+
+    public function addPayerToPreference(Preference $preference, Payer $payer): Preference
+    {
+        $preference->payer = $payer;
+        return $preference;
+    }
+
+    public function savePreference(Preference $preference): bool
+    {
+        return $preference->save();
     }
 
     public function pay(array $order): Payment
@@ -33,16 +91,18 @@ class MercadoPago {
             throw new \InvalidArgumentException('Error while validating the order');
         }
 
-        $this->payment->transaction_amount = $order['transaction_amount'];
-        $this->payment->token = $order['token'];
-        $this->payment->description = $order['description'];
-        $this->payment->installments = $order['installments'];
-        $this->payment->payment_method_id = $order['payment_method_id'];
-        $this->payment->payer = $order['payer'];
+        $payment = new Payment();
 
-        $this->payment->save();
+        $payment->transaction_amount = $order['transaction_amount'];
+        $payment->token = $order['token'];
+        $payment->description = $order['description'];
+        $payment->installments = $order['installments'];
+        $payment->payment_method_id = $order['payment_method_id'];
+        $payment->payer = $order['payer'];
 
-        return $this->payment;
+        $payment->save();
+
+        return $payment;
     }
 
     protected function validateOrder(array $order): bool

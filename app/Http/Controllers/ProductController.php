@@ -18,29 +18,22 @@ class ProductController extends Controller
             'img'
         ]);
 
-        $item = $this->createItem($product);
-
         $mercadoPago = new MercadoPago();
-        $preference = $mercadoPago->addItem($item);
+
+        $preference = $mercadoPago->createPreference();
+
+        $item = $mercadoPago->createItem($product);
+
+        $mercadoPago->addItemToPreference($preference, $item);
+
+        $mercadoPago->addPayerToPreference($preference, $mercadoPago->createPayer());
+
+        $mercadoPago->savePreference($preference);
 
         return response()->view('detail', [
             'product' => $product,
             'preference' => $preference->id,
             'publicKey' => config('mercadopago.public_id'),
         ]);
-    }
-
-    private function createItem(array $product): Item
-    {
-        $item = new Item();
-        $item->title = $product['title'];
-        $item->quantity = $product['unit'];
-        $item->unit_price = $product['price'];
-        return $item;
-    }
-
-    public function pay(Request $request)
-    {
-
     }
 }
