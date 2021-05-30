@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'result'])->name('result');
+Route::get('/result', [\App\Http\Controllers\HomeController::class, 'result'])->name('result');
 
 Route::post('/detail', [\App\Http\Controllers\ProductController::class, 'detail'])->name('products.detail');
 
