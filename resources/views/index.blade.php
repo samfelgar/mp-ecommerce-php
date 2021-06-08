@@ -554,3 +554,7 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script src="https://www.mercadopago.com/v2/security.js" view="home"></script>
+@endpush

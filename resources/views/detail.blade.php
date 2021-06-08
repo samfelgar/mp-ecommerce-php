@@ -51,7 +51,6 @@
                     </h3>
                 </div>
                 <div class="payment-button"></div>
-                {{--                    <button type="submit" class="" formmethod="post">Pagar</button>--}}
             </div>
         </div>
     </div>

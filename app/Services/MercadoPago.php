@@ -45,6 +45,7 @@ class MercadoPago
             'installments' => 6,
         ];
         $preference->external_reference = 'samfelgar@gmail.com';
+        $preference->auto_return = 'approved';
 
         return $preference;
     }
